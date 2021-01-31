@@ -4,11 +4,17 @@ FROM alpine:latest as rclone
 ADD https://downloads.rclone.org/rclone-current-linux-amd64.zip /
 RUN unzip rclone-current-linux-amd64.zip && mv rclone-*-linux-amd64/rclone /bin/rclone && chmod +x /bin/rclone
 
+FROM alpine:latest as rcon
+ARG RCON_CLI_VERSION=1.4.8
+ADD https://github.com/itzg/rcon-cli/releases/download/${RCON_CLI_VERSION}/rcon-cli_${RCON_CLI_VERSION}_linux_amd64.tar.gz /tmp/rcon-cli.tgz
+RUN tar -xf /tmp/rcon-cli.tgz -C /bin rcon-cli 
+
 FROM restic/restic:0.11.0
 
 RUN apk add --update --no-cache heirloom-mailx fuse curl
 
 COPY --from=rclone /bin/rclone /bin/rclone
+COPY --from=rcon  /bin/rcon-cli /bin/rcon-cli
 
 RUN \
     mkdir -p /mnt/restic /var/spool/cron/crontabs /var/log; \
