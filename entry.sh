@@ -33,7 +33,7 @@ echo "${BACKUP_CRON} /usr/bin/flock -n /var/run/backup.lock /bin/backup >> /var/
 touch /var/log/cron.log
 
 # start the cron deamon
-crond -l 0 -L /var/log/crond.log
+crond
 
 echo "Container started."
 
