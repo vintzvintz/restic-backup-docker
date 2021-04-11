@@ -29,7 +29,8 @@ fi
 echo "Setup backup cron job with cron expression BACKUP_CRON: ${BACKUP_CRON}"
 echo "${BACKUP_CRON} ${LOCKEXEC} /bin/backup >> /var/log/cron.log 2>&1" > /var/spool/cron/crontabs/root
 
-if [ -n ${PRUNE_CRON} ] ; then
+if [ -n "${PRUNE_CRON}" ] ; then
+  echo "Setup prune cron job with cron expression PRUNE_CRON: ${PRUNE_CRON}"
   echo "${PRUNE_CRON} ${LOCKEXEC} /usr/bin/restic prune >> /var/log/cron.log 2>&1" >> /var/spool/cron/crontabs/root
 fi
 
