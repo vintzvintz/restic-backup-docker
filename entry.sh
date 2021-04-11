@@ -2,6 +2,8 @@
 
 echo "Starting container ..."
 
+LOCKEXEC="/usr/bin/flock -n /var/run/backup.lock"
+
 if [ -n "${NFS_TARGET}" ]; then
     echo "Mounting NFS based on NFS_TARGET: ${NFS_TARGET}"
     mount -o nolock -v ${NFS_TARGET} /mnt/restic
@@ -24,10 +26,12 @@ if [ $status != 0 ]; then
     fi
 fi
 
-
-
 echo "Setup backup cron job with cron expression BACKUP_CRON: ${BACKUP_CRON}"
-echo "${BACKUP_CRON} /usr/bin/flock -n /var/run/backup.lock /bin/backup >> /var/log/cron.log 2>&1" > /var/spool/cron/crontabs/root
+echo "${BACKUP_CRON} ${LOCKEXEC} /bin/backup >> /var/log/cron.log 2>&1" > /var/spool/cron/crontabs/root
+
+if [ -n ${PRUNE_CRON} ] ; then
+  echo "${PRUNE_CRON} ${LOCKEXEC} /usr/bin/restic prune >> /var/log/cron.log 2>&1" >> /var/spool/cron/crontabs/root
+fi
 
 # Make sure the file exists before we start tail
 touch /var/log/cron.log
