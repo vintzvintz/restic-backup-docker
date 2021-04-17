@@ -11,7 +11,7 @@ RUN tar -xf /tmp/rcon-cli.tgz -C /bin rcon-cli
 
 FROM restic/restic:0.12.0
 
-RUN apk add --update --no-cache heirloom-mailx fuse curl isync bash
+RUN apk add --update --no-cache heirloom-mailx fuse curl isync bash mysql-client
 
 COPY --from=rclone /bin/rclone /bin/rclone
 COPY --from=rcon  /bin/rcon-cli /bin/rcon-cli
